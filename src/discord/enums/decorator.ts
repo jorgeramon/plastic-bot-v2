@@ -1,0 +1,5 @@
+export enum Decorator {
+  COMMAND = 'COMMAND',
+  SUBCOMMAND = 'SUBCOMMAND',
+  SUBCOMMAND_GROUP = 'SUBCOMMAND_GROUP',
+}
