@@ -50,7 +50,7 @@ export class FunaGateway {
       to: userId,
     });
 
-    await interaction.editReply(`**${user.displayName}** ha sido funado!`);
+    await interaction.editReply(`<@${user.id}> ha sido funado!`);
   }
 
   @Command({
@@ -67,7 +67,7 @@ export class FunaGateway {
         ? 'No has sido funado todavía 😡'
         : funas.length === 1
         ? 'Sólo tienes **1** funa 🙄'
-        : `Has sido funado ${funas.length} veces 😏`,
+        : `Has sido funado **${funas.length}** veces 😏`,
     );
   }
 }
