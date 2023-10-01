@@ -4,6 +4,7 @@ import { DiscordModule } from '@discord/discord.module';
 import { FunModule } from '@fun/fun.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Environment } from '@common/enums/environment';
+import { ArtificialIntelligenceModule } from '@artificial-intelligence/artificial-intelligence.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { Environment } from '@common/enums/environment';
     }),
     DiscordModule,
     FunModule,
+    ArtificialIntelligenceModule,
   ],
 })
 export class AppModule {}

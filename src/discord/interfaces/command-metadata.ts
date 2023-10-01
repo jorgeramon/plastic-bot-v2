@@ -5,7 +5,8 @@ import { SubcommandOptions } from '@discord/interfaces/subcommand-options';
 export interface CommandMetadata {
   instance: any;
   method: string;
-  command: CommandOptions;
+  isMention: boolean;
+  command?: CommandOptions;
   subcommand?: SubcommandOptions;
   subcommandGroup?: SubcommandGroupOptions;
 }

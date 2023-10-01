@@ -20,7 +20,8 @@
     "paths": {
       "@common/*": ["./common/*"],
       "@discord/*": ["./discord/*"],
-      "@fun/*": ["./fun/*"]
+      "@fun/*": ["./fun/*"],
+      "@artificial-intelligence/*": ["./artificial-intelligence/*"]
     }
   }
 }

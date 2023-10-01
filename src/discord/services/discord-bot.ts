@@ -1,7 +1,5 @@
-import { Environment } from '@common/enums/environment';
 import { CommandMetadata } from '@discord/interfaces/command-metadata';
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { CommandDiscovery } from '@discord/services/command-discovery';
 import { DiscordClient } from '@discord/services/discord-client';
 import { Collection, CommandInteraction, OAuth2Guild } from 'discord.js';
@@ -10,12 +8,12 @@ import {
   catchError,
   combineLatest,
   filter,
+  forkJoin,
   from,
   Observable,
   of,
   switchMap,
   tap,
-  mergeMap,
 } from 'rxjs';
 
 @Injectable()
@@ -24,7 +22,6 @@ export class DiscordBot implements OnApplicationBootstrap {
 
   constructor(
     private readonly client: DiscordClient,
-    private readonly configService: ConfigService,
     private readonly commandDiscovery: CommandDiscovery,
   ) {}
 
@@ -38,6 +35,7 @@ export class DiscordBot implements OnApplicationBootstrap {
   async connect(): Promise<void> {
     this.onReady();
     this.onInteraction();
+    this.onMessage();
 
     await this.client.connect();
   }
@@ -114,6 +112,32 @@ export class DiscordBot implements OnApplicationBootstrap {
         ),
       )
       .subscribe();
+  }
+
+  onMessage() {
+    this.client
+      .onMessage()
+      .pipe(
+        filter((message) => message.mentions.has(this.client.user.id)),
+        switchMap((message) => {
+          const observables: Observable<any>[] = this.findMentionMetadata().map(
+            ({ instance, method }) => {
+              const result = instance[method](message);
+              return result instanceof Promise || result instanceof Observable
+                ? from(result)
+                : of(result);
+            },
+          );
+          return forkJoin(observables);
+        }),
+      )
+      .subscribe();
+  }
+
+  private findMentionMetadata(): CommandMetadata[] {
+    return this.commandDiscovery
+      .getMetadata()
+      .filter((command) => command.isMention);
   }
 
   private findCommandMetadata(

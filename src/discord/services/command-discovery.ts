@@ -2,8 +2,8 @@ import { Decorator } from '@discord/enums/decorator';
 import { CommandMetadata } from '@discord/interfaces/command-metadata';
 import { CommandOptions } from '@discord/interfaces/command-options';
 import { DiscordCommand } from '@discord/interfaces/discord-command';
-import { SubcommandGroupOptions } from '@discord/interfaces/subcommand-group-options';
-import { SubcommandOptions } from '@discord/interfaces/subcommand-options';
+// import { SubcommandGroupOptions } from '@discord/interfaces/subcommand-group-options';
+// import { SubcommandOptions } from '@discord/interfaces/subcommand-options';
 import { Injectable, Logger } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
@@ -53,6 +53,20 @@ export class CommandDiscovery {
     instance: any,
     method: string,
   ): CommandMetadata | null {
+    const isMention: boolean = !!Reflect.getMetadata(
+      Decorator.MENTION,
+      instance,
+      method,
+    );
+
+    if (isMention) {
+      return {
+        instance,
+        method,
+        isMention: true,
+      };
+    }
+
     const commandMetadata: CommandOptions = Reflect.getMetadata(
       Decorator.COMMAND,
       instance,
@@ -63,6 +77,7 @@ export class CommandDiscovery {
       return null;
     }
 
+    /*
     const subcommandMetadata: SubcommandOptions = Reflect.getMetadata(
       Decorator.SUBCOMMAND,
       instance,
@@ -73,23 +88,42 @@ export class CommandDiscovery {
       Decorator.SUBCOMMAND_GROUP,
       instance,
       method,
-    );
+    );*/
 
     return {
       instance,
       method,
+      isMention: false,
       command: commandMetadata,
-      subcommand: subcommandMetadata,
-      subcommandGroup: subcommandGroupMetadata,
+      // subcommand: subcommandMetadata,
+      // subcommandGroup: subcommandGroupMetadata,
     };
   }
 
   private getHierarchy(commands: CommandMetadata[]): DiscordCommand[] {
     this.logger.log('Getting commands hierarchy');
 
-    const tmpMemory = new Map<string, DiscordCommand>();
+    return [
+      ...commands
+        .filter((command) => !command.isMention)
+        .reduce((map, metadata) => {
+          const { command } = metadata;
+          map.set(command.name, {
+            ...command,
+            subcommands: [],
+            subcommandGroups: [],
+          });
+          return map;
+        }, new Map<string, DiscordCommand>())
+        .values(),
+    ];
 
-    for (const { command, subcommand, subcommandGroup } of commands) {
+    /*for (const {
+      command,
+      subcommand,
+      subcommandGroup,
+      isMention,
+    } of commands) {
       if (!tmpMemory.has(command.name)) {
         tmpMemory.set(command.name, {
           ...command,
@@ -116,6 +150,6 @@ export class CommandDiscovery {
       }
     }
 
-    return [...tmpMemory.values()];
+    return [...tmpMemory.values()];*/
   }
 }

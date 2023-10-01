@@ -19,6 +19,8 @@ import {
   CommandInteraction,
   IntentsBitField,
   Interaction,
+  GatewayIntentBits,
+  Message,
 } from 'discord.js';
 import { Observable, Subscriber } from 'rxjs';
 
@@ -31,7 +33,7 @@ export class DiscordClient extends Client {
     private readonly discovery: CommandDiscovery,
   ) {
     super({
-      intents: [IntentsBitField.Flags.Guilds],
+      intents: [IntentsBitField.Flags.Guilds, GatewayIntentBits.GuildMessages],
     });
   }
 
@@ -53,6 +55,12 @@ export class DiscordClient extends Client {
       this.on('interactionCreate', (interaction: Interaction) =>
         subscriber.next(interaction as CommandInteraction),
       );
+    });
+  }
+
+  onMessage(): Observable<Message> {
+    return new Observable((subscriber: Subscriber<Message>) => {
+      this.on('messageCreate', (message: Message) => subscriber.next(message));
     });
   }
 
