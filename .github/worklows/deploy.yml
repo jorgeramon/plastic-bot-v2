@@ -1,0 +1,22 @@
+name: Deployment
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy-to-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploying code in server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd plastic-bot-v2
+            git pull origin master
+            npm run build
+            pm2 restart dist/main.js
+      
