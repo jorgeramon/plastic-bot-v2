@@ -13,10 +13,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
-          port: ${{ secrets.SSH_PORT }}
           script: |
             cd plastic-bot-v2
             git pull origin master
-            npm run build
-            pm2 restart dist/main.js
-      
+            yarn build
+            pm2 restart pm2.yml

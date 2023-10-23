@@ -1,0 +1,4 @@
+name: Plastic Bot v2
+script: dist/main.js
+env:
+  NODE_ENV: production
