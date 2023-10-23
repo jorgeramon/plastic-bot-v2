@@ -145,6 +145,7 @@ export class DiscordBot implements OnApplicationBootstrap {
   ): CommandMetadata {
     return this.commandDiscovery
       .getMetadata()
+      .filter((metadata) => !!metadata.command)
       .filter(({ command }) => command.name === interaction.commandName)
       .find((command) => {
         if (!command.subcommand && !command.subcommandGroup) {
