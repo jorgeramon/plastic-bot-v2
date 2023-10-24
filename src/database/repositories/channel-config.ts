@@ -1,3 +1,4 @@
+import { ChannelType } from '@database/enums/channel-type';
 import {
   ChannelConfig,
   ChannelConfigDocument,
@@ -12,11 +13,15 @@ export class ChannelConfigRepository {
     @InjectModel(ChannelConfig.name) private model: Model<ChannelConfig>,
   ) {}
 
-  async upsert(data: ChannelConfig): Promise<ChannelConfigDocument> {
+  upsert(data: ChannelConfig): Promise<ChannelConfigDocument> {
     return this.model.findOneAndUpdate(
       { type: data.type },
       { channel: data.channel },
       { new: true, upsert: true },
     );
+  }
+
+  findOneByType(type: ChannelType): Promise<ChannelConfigDocument | null> {
+    return this.model.findOne({ type }).exec();
   }
 }

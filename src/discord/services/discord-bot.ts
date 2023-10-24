@@ -150,7 +150,7 @@ export class DiscordBot implements OnApplicationBootstrap {
   ): CommandMetadata {
     const subcommandName = (
       interaction.options as CommandInteractionOptionResolver
-    ).getSubcommand();
+    ).getSubcommand(false);
 
     const isCommand = !subcommandName;
     const isSubcommand = !!subcommandName;

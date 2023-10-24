@@ -1,4 +1,4 @@
-import { ChannelType } from '@admin/enums/channel-type';
+import { ChannelType } from '@database/enums/channel-type';
 
 export interface IChannelConfig {
   type: ChannelType;

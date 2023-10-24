@@ -1,4 +1,4 @@
-import { ChannelType } from '@admin/enums/channel-type';
+import { ChannelType } from '@database/enums/channel-type';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
