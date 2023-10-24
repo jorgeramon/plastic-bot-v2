@@ -1,21 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfessionGateway } from '@admin/gateways/confession';
-import { ChannelConfigService } from '@admin/services/channel-config';
-import {
-  ChannelConfig,
-  ChannelConfigSchema,
-} from '@admin/schemas/channel-config';
-import { MongooseModule } from '@nestjs/mongoose';
+import { DatabaseModule } from '@database/database.module';
+import { AdminChannelService } from './services/admin-channel';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      {
-        name: ChannelConfig.name,
-        schema: ChannelConfigSchema,
-      },
-    ]),
-  ],
-  providers: [ConfessionGateway, ChannelConfigService],
+  imports: [DatabaseModule],
+  providers: [ConfessionGateway, AdminChannelService],
 })
 export class AdminModule {}

@@ -4,13 +4,12 @@ import { ExtendsCommand } from '@discord/decorators/extends-command';
 import { Subcommand } from '@discord/decorators/subcommand';
 import { CommandParameterType } from '@discord/enums/command-parameter-type';
 import { CommandInteraction } from 'discord.js';
-import { ChannelConfigService } from '@admin/services/channel-config';
-import { ChannelType } from '@admin/enums/channel-type';
+import { AdminChannelService } from '@admin/services/admin-channel';
 
 @Injectable()
 @ExtendsCommand()
 export class ConfessionGateway extends BaseGateway {
-  constructor(private readonly channelConfigService: ChannelConfigService) {
+  constructor(private readonly adminChannelService: AdminChannelService) {
     super();
   }
 
@@ -32,10 +31,7 @@ export class ConfessionGateway extends BaseGateway {
 
     const channelId = interaction.options.get('canal').value as string;
 
-    await this.channelConfigService.upsert({
-      type: ChannelType.CONFESSION,
-      channel: channelId,
-    });
+    await this.adminChannelService.setConfessionChannel(channelId);
 
     await interaction.editReply('Canal de confesiones actualizado');
   }

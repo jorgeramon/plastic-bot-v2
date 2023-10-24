@@ -1,9 +1,9 @@
 import { Command } from '@discord/decorators/command';
 import { CommandParameterType } from '@discord/enums/command-parameter-type';
-import { FunaService } from '@fun/services/funa';
 import { Injectable } from '@nestjs/common';
 import { CommandInteraction } from 'discord.js';
 import { sample } from 'lodash';
+import { FunaService } from '@fun/services/funa';
 
 const autoFunaMessages = [
   '¿Todo bien en casa? 🤨',
@@ -45,10 +45,7 @@ export class FunaGateway {
       return;
     }
 
-    await this.funaService.create({
-      from: interaction.user.id,
-      to: userId,
-    });
+    await this.funaService.giveFuna(interaction.user.id, userId);
 
     await interaction.editReply(`<@${user.id}> ha sido funado!`);
   }
@@ -60,14 +57,16 @@ export class FunaGateway {
   async funas(interaction: CommandInteraction) {
     await interaction.deferReply();
 
-    const funas = await this.funaService.findByTo(interaction.user.id);
+    const count = await this.funaService.countReceivedFunas(
+      interaction.user.id,
+    );
 
     await interaction.editReply(
-      funas.length === 0
+      count === 0
         ? 'No has sido funado todavía 😡'
-        : funas.length === 1
+        : count === 1
         ? 'Sólo tienes **1** funa 🙄'
-        : `Has sido funado **${funas.length}** veces 😏`,
+        : `Has sido funado **${count}** veces 😏`,
     );
   }
 }

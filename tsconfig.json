@@ -22,7 +22,8 @@
       "@discord/*": ["./discord/*"],
       "@fun/*": ["./fun/*"],
       "@artificial-intelligence/*": ["./artificial-intelligence/*"],
-      "@admin/*": ["./admin/*"]
+      "@admin/*": ["./admin/*"],
+      "@database/*": ["./database/*"]
     }
   }
 }
