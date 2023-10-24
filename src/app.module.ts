@@ -5,6 +5,7 @@ import { FunModule } from '@fun/fun.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Environment } from '@common/enums/environment';
 import { ArtificialIntelligenceModule } from '@artificial-intelligence/artificial-intelligence.module';
+import { AdminModule } from '@admin/admin.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ArtificialIntelligenceModule } from '@artificial-intelligence/artificia
     DiscordModule,
     FunModule,
     ArtificialIntelligenceModule,
+    AdminModule,
   ],
 })
 export class AppModule {}

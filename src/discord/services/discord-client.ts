@@ -87,6 +87,8 @@ export class DiscordClient extends Client {
           Environment.DISCORD_TEST_GUILD,
         );
 
+        this.logger.debug(slashCommands);
+
         await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
           body: slashCommands,
         });
@@ -126,6 +128,12 @@ export class DiscordClient extends Client {
     if (command.parameters) {
       command.parameters.forEach((parameter) =>
         this.buildParameter(builder, parameter),
+      );
+    }
+
+    if (command.permissions) {
+      (builder as SlashCommandBuilder).setDefaultMemberPermissions(
+        command.permissions.reduce((acc, val) => acc | val, BigInt(0)),
       );
     }
 

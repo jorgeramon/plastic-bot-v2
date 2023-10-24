@@ -1,6 +1,3 @@
-import { CommandBaseOptions } from '@discord/interfaces/command-base-options';
-import { CommandParameter } from '@discord/interfaces/command-parameter';
+import { CommandOptions } from '@discord/interfaces/command-options';
 
-export interface SubcommandOptions extends CommandBaseOptions {
-  parameters?: CommandParameter[];
-}
+export interface SubcommandOptions extends CommandOptions {}

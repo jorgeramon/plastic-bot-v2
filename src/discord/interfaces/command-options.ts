@@ -3,4 +3,5 @@ import { CommandParameter } from '@discord/interfaces/command-parameter';
 
 export interface CommandOptions extends CommandBaseOptions {
   parameters?: CommandParameter[];
+  permissions?: bigint[];
 }

@@ -2,8 +2,8 @@ import { Decorator } from '@discord/enums/decorator';
 import { CommandMetadata } from '@discord/interfaces/command-metadata';
 import { CommandOptions } from '@discord/interfaces/command-options';
 import { DiscordCommand } from '@discord/interfaces/discord-command';
+import { SubcommandOptions } from '@discord/interfaces/subcommand-options';
 // import { SubcommandGroupOptions } from '@discord/interfaces/subcommand-group-options';
-// import { SubcommandOptions } from '@discord/interfaces/subcommand-options';
 import { Injectable, Logger } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
@@ -77,14 +77,13 @@ export class CommandDiscovery {
       return null;
     }
 
-    /*
     const subcommandMetadata: SubcommandOptions = Reflect.getMetadata(
       Decorator.SUBCOMMAND,
       instance,
       method,
     );
 
-    const subcommandGroupMetadata: SubcommandGroupOptions = Reflect.getMetadata(
+    /*const subcommandGroupMetadata: SubcommandGroupOptions = Reflect.getMetadata(
       Decorator.SUBCOMMAND_GROUP,
       instance,
       method,
@@ -95,7 +94,7 @@ export class CommandDiscovery {
       method,
       isMention: false,
       command: commandMetadata,
-      // subcommand: subcommandMetadata,
+      subcommand: subcommandMetadata,
       // subcommandGroup: subcommandGroupMetadata,
     };
   }
@@ -107,12 +106,17 @@ export class CommandDiscovery {
       ...commands
         .filter((command) => !command.isMention)
         .reduce((map, metadata) => {
-          const { command } = metadata;
-          map.set(command.name, {
-            ...command,
-            subcommands: [],
-            subcommandGroups: [],
-          });
+          const { command, subcommand } = metadata;
+
+          if (map.has(command.name)) {
+          } else {
+            map.set(command.name, {
+              ...command,
+              subcommands: subcommand ? [subcommand] : [],
+              subcommandGroups: [],
+            });
+          }
+
           return map;
         }, new Map<string, DiscordCommand>())
         .values(),

@@ -2,7 +2,12 @@ import { CommandMetadata } from '@discord/interfaces/command-metadata';
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { CommandDiscovery } from '@discord/services/command-discovery';
 import { DiscordClient } from '@discord/services/discord-client';
-import { Collection, CommandInteraction, OAuth2Guild } from 'discord.js';
+import {
+  Collection,
+  CommandInteraction,
+  CommandInteractionOptionResolver,
+  OAuth2Guild,
+} from 'discord.js';
 import { RuntimeException } from 'common/exceptions/runtime';
 import {
   catchError,
@@ -143,39 +148,26 @@ export class DiscordBot implements OnApplicationBootstrap {
   private findCommandMetadata(
     interaction: CommandInteraction,
   ): CommandMetadata {
-    return this.commandDiscovery
+    const subcommandName = (
+      interaction.options as CommandInteractionOptionResolver
+    ).getSubcommand();
+
+    const isCommand = !subcommandName;
+    const isSubcommand = !!subcommandName;
+
+    const metadata = this.commandDiscovery
       .getMetadata()
-      .filter((metadata) => !!metadata.command)
-      .filter(({ command }) => command.name === interaction.commandName)
-      .find((command) => {
-        if (!command.subcommand && !command.subcommandGroup) {
-          return command;
-        }
+      .filter((metadata) => !metadata.isMention)
+      .filter(({ command }) => command.name === interaction.commandName);
 
-        /* TODO: Check subcommands
-        if (command.subcommandGroup && command.subcommand) {
-          const subcommandGroupName = interaction.;
+    if (isCommand) {
+      return metadata[0];
+    }
 
-          const subcommandName = interaction.options.getSubcommand();
-
-          if (
-            subcommandGroupName &&
-            command.subcommandGroup.name === subcommandGroupName &&
-            subcommandName === command.subcommand.name
-          ) {
-            return command;
-          }
-        }
-
-        if (!command.subcommandGroup && command.subcommand) {
-          const subcommandName = interaction.options.getSubcommand();
-
-          if (subcommandName && command.subcommand.name === subcommandName) {
-            return command;
-          }
-        }*/
-
-        return false;
-      });
+    if (isSubcommand) {
+      return metadata
+        .filter(({ subcommand }) => !!subcommand)
+        .find(({ subcommand }) => subcommand.name === subcommandName);
+    }
   }
 }
