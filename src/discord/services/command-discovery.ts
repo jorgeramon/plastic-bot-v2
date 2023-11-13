@@ -2,8 +2,8 @@ import { Decorator } from '@discord/enums/decorator';
 import { CommandMetadata } from '@discord/interfaces/command-metadata';
 import { CommandOptions } from '@discord/interfaces/command-options';
 import { DiscordCommand } from '@discord/interfaces/discord-command';
+import { SubcommandGroupOptions } from '@discord/interfaces/subcommand-group-options';
 import { SubcommandOptions } from '@discord/interfaces/subcommand-options';
-// import { SubcommandGroupOptions } from '@discord/interfaces/subcommand-group-options';
 import { Injectable, Logger } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
@@ -83,11 +83,11 @@ export class CommandDiscovery {
       method,
     );
 
-    /*const subcommandGroupMetadata: SubcommandGroupOptions = Reflect.getMetadata(
+    const subcommandGroupMetadata: SubcommandGroupOptions = Reflect.getMetadata(
       Decorator.SUBCOMMAND_GROUP,
       instance,
       method,
-    );*/
+    );
 
     return {
       instance,
@@ -95,7 +95,7 @@ export class CommandDiscovery {
       isMention: false,
       command: commandMetadata,
       subcommand: subcommandMetadata,
-      // subcommandGroup: subcommandGroupMetadata,
+      subcommandGroup: subcommandGroupMetadata,
     };
   }
 
@@ -106,54 +106,36 @@ export class CommandDiscovery {
       ...commands
         .filter((command) => !command.isMention)
         .reduce((map, metadata) => {
-          const { command, subcommand } = metadata;
+          const { command, subcommand, subcommandGroup } = metadata;
 
-          if (map.has(command.name)) {
-          } else {
-            map.set(command.name, {
-              ...command,
-              subcommands: subcommand ? [subcommand] : [],
-              subcommandGroups: [],
-            });
+          let discordCommand: DiscordCommand = map.get(command.name) || {
+            ...command,
+            subcommands: [],
+            subcommandGroups: [],
+          };
+
+          if (subcommandGroup) {
+            const currentSubcommandGroup = discordCommand.subcommandGroups.find(
+              (x) => x.name === subcommandGroup.name,
+            );
+
+            if (!currentSubcommandGroup) {
+              discordCommand.subcommandGroups.push({
+                ...subcommandGroup,
+                subcommands: [subcommand],
+              });
+            } else {
+              currentSubcommandGroup.subcommands.push(subcommand);
+            }
+          } else if (subcommand) {
+            discordCommand.subcommands.push(subcommand);
           }
+
+          map.set(command.name, discordCommand);
 
           return map;
         }, new Map<string, DiscordCommand>())
         .values(),
     ];
-
-    /*for (const {
-      command,
-      subcommand,
-      subcommandGroup,
-      isMention,
-    } of commands) {
-      if (!tmpMemory.has(command.name)) {
-        tmpMemory.set(command.name, {
-          ...command,
-          subcommandGroups: [],
-          subcommands: [],
-        });
-      }
-
-      const { subcommandGroups, subcommands } = tmpMemory.get(command.name);
-
-      if (subcommandGroup) {
-        let group = subcommandGroups.find(
-          (c) => c.name === subcommandGroup.name,
-        );
-
-        if (!group) {
-          group = { ...subcommandGroup, subcommands: [] };
-          subcommandGroups.push(group);
-        }
-
-        group.subcommands.push(subcommand);
-      } else if (subcommand) {
-        subcommands.push(subcommand);
-      }
-    }
-
-    return [...tmpMemory.values()];*/
   }
 }

@@ -20,14 +20,14 @@ export const SubcommandGroup =
       Reflect.defineMetadata(Decorator.SUBCOMMAND_GROUP, options, target);
 
       for (const propertyName of Object.getOwnPropertyNames(target.prototype)) {
-        if (!isMethod(target, propertyName)) {
+        if (!isMethod(target.prototype, propertyName)) {
           continue;
         }
 
         Reflect.defineMetadata(
           Decorator.SUBCOMMAND_GROUP,
           options,
-          target,
+          target.prototype,
           propertyName,
         );
       }

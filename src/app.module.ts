@@ -5,7 +5,6 @@ import { FunModule } from '@fun/fun.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Environment } from '@common/enums/environment';
 import { AdminModule } from '@admin/admin.module';
-import { AutoRoleModule } from '@autorole/autorole.module';
 
 @Module({
   imports: [
@@ -20,7 +19,6 @@ import { AutoRoleModule } from '@autorole/autorole.module';
     DiscordModule,
     FunModule,
     AdminModule,
-    AutoRoleModule,
   ],
 })
 export class AppModule {}

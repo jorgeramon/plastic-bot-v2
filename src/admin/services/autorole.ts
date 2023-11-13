@@ -1,4 +1,4 @@
-import { IAutoRole } from '@autorole/interfaces/autorole';
+import { IAutoRole } from '@admin/interfaces/autorole';
 import { RuntimeException } from '@common/exceptions/runtime';
 import { AutoRoleMessageRepository } from '@database/repositories/autorole-message';
 import { Injectable } from '@nestjs/common';

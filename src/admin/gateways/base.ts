@@ -6,6 +6,9 @@ import { PermissionFlagsBits } from 'discord.js';
 @Command({
   name: 'admin',
   description: 'Comandos de administración y configuración del servidor',
-  permissions: [PermissionFlagsBits.ManageChannels],
+  permissions: [
+    PermissionFlagsBits.ManageChannels,
+    PermissionFlagsBits.ManageMessages,
+  ],
 })
 export class BaseGateway {}

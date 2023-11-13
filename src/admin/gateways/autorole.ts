@@ -4,19 +4,22 @@ import { CommandParameterType } from '@discord/enums/command-parameter-type';
 import {
   CommandInteraction,
   CommandInteractionOptionResolver,
-  PermissionFlagsBits,
 } from 'discord.js';
-import { Command } from '@discord/decorators/command';
-import { AutoRoleService } from '@autorole/services/autorole';
+import { AutoRoleService } from '@admin/services/autorole';
+import { ExtendsCommand } from '@discord/decorators/extends-command';
+import { SubcommandGroup } from '@discord/decorators/subcommand-group';
+import { BaseGateway } from '@admin/gateways/base';
 
 @Injectable()
-@Command({
-  name: 'autorol',
-  description: 'Comandos para agregar auto roles a cualquier mensaje',
-  permissions: [PermissionFlagsBits.ManageMessages],
+@ExtendsCommand()
+@SubcommandGroup({
+  name: 'autoroles',
+  description: 'Comandos para administrar autoroles a cualquier mensaje',
 })
-export class AutoRoleGateway {
-  constructor(private readonly autoroleService: AutoRoleService) {}
+export class AutoRoleGateway extends BaseGateway {
+  constructor(private readonly autoroleService: AutoRoleService) {
+    super();
+  }
 
   @Subcommand({
     name: 'agregar',

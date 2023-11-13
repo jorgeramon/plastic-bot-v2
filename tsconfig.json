@@ -21,7 +21,6 @@
       "@common/*": ["./common/*"],
       "@discord/*": ["./discord/*"],
       "@fun/*": ["./fun/*"],
-      "@autorole/*": ["./autorole/*"],
       "@admin/*": ["./admin/*"],
       "@database/*": ["./database/*"]
     }

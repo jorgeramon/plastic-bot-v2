@@ -245,8 +245,13 @@ export class DiscordBot implements OnApplicationBootstrap {
       interaction.options as CommandInteractionOptionResolver
     ).getSubcommand(false);
 
+    const subcommandGroupName = (
+      interaction.options as CommandInteractionOptionResolver
+    ).getSubcommandGroup(false);
+
     const isCommand = !subcommandName;
     const isSubcommand = !!subcommandName;
+    const isSubcommandGroup = !!subcommandGroupName;
 
     const metadata = this.commandDiscovery
       .getMetadata()
@@ -255,6 +260,19 @@ export class DiscordBot implements OnApplicationBootstrap {
 
     if (isCommand) {
       return metadata[0];
+    }
+
+    if (isSubcommandGroup) {
+      return metadata
+        .filter(
+          ({ subcommandGroup, subcommand }) =>
+            !!subcommandGroup && !!subcommand,
+        )
+        .find(
+          ({ subcommandGroup, subcommand }) =>
+            subcommandGroup.name === subcommandGroupName &&
+            subcommand.name === subcommandName,
+        );
     }
 
     if (isSubcommand) {
