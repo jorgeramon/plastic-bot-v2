@@ -21,7 +21,7 @@
       "@common/*": ["./common/*"],
       "@discord/*": ["./discord/*"],
       "@fun/*": ["./fun/*"],
-      "@artificial-intelligence/*": ["./artificial-intelligence/*"],
+      "@autorole/*": ["./autorole/*"],
       "@admin/*": ["./admin/*"],
       "@database/*": ["./database/*"]
     }

@@ -22,7 +22,7 @@ export const Command =
         Reflect.defineMetadata(
           Decorator.COMMAND,
           options,
-          target,
+          target.prototype,
           propertyName,
         );
       }

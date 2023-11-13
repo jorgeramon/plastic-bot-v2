@@ -7,6 +7,10 @@ import {
 import { Funa, FunaSchema } from '@database/schemas/funa';
 import { ChannelConfigRepository } from '@database/repositories/channel-config';
 import { FunaRepository } from '@database/repositories/funa';
+import {
+  AutoRoleMessage,
+  AutoRoleMessageSchema,
+} from '@database/schemas/autorole-message';
 
 @Module({
   imports: [
@@ -18,6 +22,10 @@ import { FunaRepository } from '@database/repositories/funa';
       {
         name: Funa.name,
         schema: FunaSchema,
+      },
+      {
+        name: AutoRoleMessage.name,
+        schema: AutoRoleMessageSchema,
       },
     ]),
   ],
