@@ -148,22 +148,17 @@ export class DiscordBot implements OnApplicationBootstrap {
     this.client
       .onReactionAdd()
       .pipe(
-        switchMap((reaction) =>
+        switchMap(([reaction, user]) =>
           combineLatest([
-            of(reaction),
+            reaction.partial ? reaction.fetch() : of(reaction),
+            of(user),
             this.autoRoleMessageRepository.findOneByMessage(
               reaction.message.id,
             ),
           ]),
         ),
-        filter(([_, autoRoleMessage]) => !!autoRoleMessage),
-        switchMap(([reaction, autoRoleMessage]) =>
-          combineLatest([
-            reaction.partial ? reaction.fetch() : of(reaction),
-            of(autoRoleMessage),
-          ]),
-        ),
-        switchMap(([reaction, autoRoleMessage]) => {
+        filter(([_, __, autoRoleMessage]) => !!autoRoleMessage),
+        switchMap(([reaction, user, autoRoleMessage]) => {
           const emoji =
             reaction.emoji.id !== null
               ? `<:${reaction.emoji.identifier}>`
@@ -173,16 +168,20 @@ export class DiscordBot implements OnApplicationBootstrap {
             (x) => x.emoji === emoji,
           );
 
-          return combineLatest([of(reaction), of(configuration)]);
+          return combineLatest([
+            reaction.message.guild.members.fetch(user.id),
+            of(user),
+            of(configuration),
+          ]);
         }),
-        filter(([_, configuration]) => !!configuration),
-        tap(([reaction, configuration]) =>
+        filter(([_, __, configuration]) => !!configuration),
+        tap(([_, user, configuration]) =>
           this.logger.log(
-            `Adding role ${configuration.role} to ${reaction.message.member.user.username}`,
+            `Adding role ${configuration.role} to ${user.username}`,
           ),
         ),
-        switchMap(([reaction, configuration]) =>
-          reaction.message.member.roles.add(configuration.role),
+        switchMap(([member, _, configuration]) =>
+          member.roles.add(configuration.role),
         ),
       )
       .subscribe();
@@ -192,22 +191,17 @@ export class DiscordBot implements OnApplicationBootstrap {
     this.client
       .onReactionRemove()
       .pipe(
-        switchMap((reaction) =>
+        switchMap(([reaction, user]) =>
           combineLatest([
-            of(reaction),
+            reaction.partial ? reaction.fetch() : of(reaction),
+            of(user),
             this.autoRoleMessageRepository.findOneByMessage(
               reaction.message.id,
             ),
           ]),
         ),
-        filter(([_, autoRoleMessage]) => !!autoRoleMessage),
-        switchMap(([reaction, autoRoleMessage]) =>
-          combineLatest([
-            reaction.partial ? reaction.fetch() : of(reaction),
-            of(autoRoleMessage),
-          ]),
-        ),
-        switchMap(([reaction, autoRoleMessage]) => {
+        filter(([_, __, autoRoleMessage]) => !!autoRoleMessage),
+        switchMap(([reaction, user, autoRoleMessage]) => {
           const emoji =
             reaction.emoji.id !== null
               ? `<:${reaction.emoji.identifier}>`
@@ -217,16 +211,20 @@ export class DiscordBot implements OnApplicationBootstrap {
             (x) => x.emoji === emoji,
           );
 
-          return combineLatest([of(reaction), of(configuration)]);
+          return combineLatest([
+            reaction.message.guild.members.fetch(user.id),
+            of(user),
+            of(configuration),
+          ]);
         }),
-        filter(([_, configuration]) => !!configuration),
-        tap(([reaction, configuration]) =>
+        filter(([_, __, configuration]) => !!configuration),
+        tap(([_, user, configuration]) =>
           this.logger.log(
-            `Removing role ${configuration.role} to ${reaction.message.member.user.username}`,
+            `Removing role ${configuration.role} to ${user.username}`,
           ),
         ),
-        switchMap(([reaction, configuration]) =>
-          reaction.message.member.roles.remove(configuration.role),
+        switchMap(([member, _, configuration]) =>
+          member.roles.remove(configuration.role),
         ),
       )
       .subscribe();

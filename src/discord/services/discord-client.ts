@@ -23,6 +23,7 @@ import {
   Message,
   MessageReaction,
   Partials,
+  User,
 } from 'discord.js';
 import { Observable, Subscriber } from 'rxjs';
 
@@ -71,18 +72,18 @@ export class DiscordClient extends Client {
     });
   }
 
-  onReactionAdd(): Observable<MessageReaction> {
-    return new Observable((subscriber: Subscriber<MessageReaction>) => {
-      this.on('messageReactionAdd', (message: MessageReaction) =>
-        subscriber.next(message),
+  onReactionAdd(): Observable<[MessageReaction, User]> {
+    return new Observable((subscriber: Subscriber<[MessageReaction, User]>) => {
+      this.on('messageReactionAdd', (message: MessageReaction, user: User) =>
+        subscriber.next([message, user]),
       );
     });
   }
 
-  onReactionRemove(): Observable<MessageReaction> {
-    return new Observable((subscriber: Subscriber<MessageReaction>) => {
-      this.on('messageReactionRemove', (message: MessageReaction) =>
-        subscriber.next(message),
+  onReactionRemove(): Observable<[MessageReaction, User]> {
+    return new Observable((subscriber: Subscriber<[MessageReaction, User]>) => {
+      this.on('messageReactionRemove', (message: MessageReaction, user: User) =>
+        subscriber.next([message, user]),
       );
     });
   }
