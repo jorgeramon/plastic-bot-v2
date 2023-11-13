@@ -18,8 +18,10 @@ import {
   Observable,
   of,
   switchMap,
+  map,
   tap,
 } from 'rxjs';
+import { AutoRoleMessageRepository } from '@database/repositories/autorole-message';
 
 @Injectable()
 export class DiscordBot implements OnApplicationBootstrap {
@@ -28,6 +30,7 @@ export class DiscordBot implements OnApplicationBootstrap {
   constructor(
     private readonly client: DiscordClient,
     private readonly commandDiscovery: CommandDiscovery,
+    private readonly autoRoleMessageRepository: AutoRoleMessageRepository,
   ) {}
 
   async onApplicationBootstrap(): Promise<void> {
@@ -41,6 +44,8 @@ export class DiscordBot implements OnApplicationBootstrap {
     this.onReady();
     this.onInteraction();
     this.onMessage();
+    this.onReactionAdd();
+    this.onReactionRemove();
 
     await this.client.connect();
   }
@@ -135,6 +140,94 @@ export class DiscordBot implements OnApplicationBootstrap {
           );
           return forkJoin(observables);
         }),
+      )
+      .subscribe();
+  }
+
+  onReactionAdd() {
+    this.client
+      .onReactionAdd()
+      .pipe(
+        switchMap((reaction) =>
+          combineLatest([
+            of(reaction),
+            this.autoRoleMessageRepository.findOneByMessage(
+              reaction.message.id,
+            ),
+          ]),
+        ),
+        filter(([_, autoRoleMessage]) => !!autoRoleMessage),
+        switchMap(([reaction, autoRoleMessage]) =>
+          combineLatest([
+            reaction.partial ? reaction.fetch() : of(reaction),
+            of(autoRoleMessage),
+          ]),
+        ),
+        switchMap(([reaction, autoRoleMessage]) => {
+          const emoji =
+            reaction.emoji.id !== null
+              ? `<:${reaction.emoji.identifier}>`
+              : reaction.emoji.name;
+
+          const configuration = autoRoleMessage.roles.find(
+            (x) => x.emoji === emoji,
+          );
+
+          return combineLatest([of(reaction), of(configuration)]);
+        }),
+        filter(([_, configuration]) => !!configuration),
+        tap(([reaction, configuration]) =>
+          this.logger.log(
+            `Adding role ${configuration.role} to ${reaction.message.member.user.username}`,
+          ),
+        ),
+        switchMap(([reaction, configuration]) =>
+          reaction.message.member.roles.add(configuration.role),
+        ),
+      )
+      .subscribe();
+  }
+
+  onReactionRemove() {
+    this.client
+      .onReactionRemove()
+      .pipe(
+        switchMap((reaction) =>
+          combineLatest([
+            of(reaction),
+            this.autoRoleMessageRepository.findOneByMessage(
+              reaction.message.id,
+            ),
+          ]),
+        ),
+        filter(([_, autoRoleMessage]) => !!autoRoleMessage),
+        switchMap(([reaction, autoRoleMessage]) =>
+          combineLatest([
+            reaction.partial ? reaction.fetch() : of(reaction),
+            of(autoRoleMessage),
+          ]),
+        ),
+        switchMap(([reaction, autoRoleMessage]) => {
+          const emoji =
+            reaction.emoji.id !== null
+              ? `<:${reaction.emoji.identifier}>`
+              : reaction.emoji.name;
+
+          const configuration = autoRoleMessage.roles.find(
+            (x) => x.emoji === emoji,
+          );
+
+          return combineLatest([of(reaction), of(configuration)]);
+        }),
+        filter(([_, configuration]) => !!configuration),
+        tap(([reaction, configuration]) =>
+          this.logger.log(
+            `Removing role ${configuration.role} to ${reaction.message.member.user.username}`,
+          ),
+        ),
+        switchMap(([reaction, configuration]) =>
+          reaction.message.member.roles.remove(configuration.role),
+        ),
       )
       .subscribe();
   }

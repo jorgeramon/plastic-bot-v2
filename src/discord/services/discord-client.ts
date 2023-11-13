@@ -21,6 +21,8 @@ import {
   Interaction,
   GatewayIntentBits,
   Message,
+  MessageReaction,
+  Partials,
 } from 'discord.js';
 import { Observable, Subscriber } from 'rxjs';
 
@@ -33,7 +35,12 @@ export class DiscordClient extends Client {
     private readonly discovery: CommandDiscovery,
   ) {
     super({
-      intents: [IntentsBitField.Flags.Guilds, GatewayIntentBits.GuildMessages],
+      intents: [
+        IntentsBitField.Flags.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageReactions,
+      ],
+      partials: [Partials.Message, Partials.Channel, Partials.Reaction],
     });
   }
 
@@ -61,6 +68,22 @@ export class DiscordClient extends Client {
   onMessage(): Observable<Message> {
     return new Observable((subscriber: Subscriber<Message>) => {
       this.on('messageCreate', (message: Message) => subscriber.next(message));
+    });
+  }
+
+  onReactionAdd(): Observable<MessageReaction> {
+    return new Observable((subscriber: Subscriber<MessageReaction>) => {
+      this.on('messageReactionAdd', (message: MessageReaction) =>
+        subscriber.next(message),
+      );
+    });
+  }
+
+  onReactionRemove(): Observable<MessageReaction> {
+    return new Observable((subscriber: Subscriber<MessageReaction>) => {
+      this.on('messageReactionRemove', (message: MessageReaction) =>
+        subscriber.next(message),
+      );
     });
   }
 
