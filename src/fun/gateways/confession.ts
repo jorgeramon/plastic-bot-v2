@@ -35,8 +35,9 @@ export class ConfessionGateway {
   async sendConfession(interaction: CommandInteraction) {
     await interaction.deferReply({ ephemeral: true });
 
-    const { guild } = interaction;
     const options = interaction.options as CommandInteractionOptionResolver;
+
+    const { guild } = interaction;
     const { channels } = guild;
     const message: string = options.getString('mensaje');
     const isPublic: boolean = options.getBoolean('quitar-anonimato', false);

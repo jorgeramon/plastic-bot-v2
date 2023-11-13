@@ -11,6 +11,7 @@ import {
   AutoRoleMessage,
   AutoRoleMessageSchema,
 } from '@database/schemas/autorole-message';
+import { AutoRoleMessageRepository } from './repositories/autorole-message';
 
 @Module({
   imports: [
@@ -29,7 +30,11 @@ import {
       },
     ]),
   ],
-  providers: [ChannelConfigRepository, FunaRepository],
-  exports: [ChannelConfigRepository, FunaRepository],
+  providers: [
+    ChannelConfigRepository,
+    FunaRepository,
+    AutoRoleMessageRepository,
+  ],
+  exports: [ChannelConfigRepository, FunaRepository, AutoRoleMessageRepository],
 })
 export class DatabaseModule {}

@@ -1,7 +1,10 @@
 import { Command } from '@discord/decorators/command';
 import { CommandParameterType } from '@discord/enums/command-parameter-type';
 import { Injectable } from '@nestjs/common';
-import { CommandInteraction } from 'discord.js';
+import {
+  CommandInteraction,
+  CommandInteractionOptionResolver,
+} from 'discord.js';
 import { sample } from 'lodash';
 import { FunaService } from '@fun/services/funa';
 
@@ -31,7 +34,9 @@ export class FunaGateway {
   async funa(interaction: CommandInteraction) {
     await interaction.deferReply();
 
-    const userId = interaction.options.get('usuario').value as string;
+    const options = interaction.options as CommandInteractionOptionResolver;
+
+    const userId: string = options.getString('usuario');
 
     if (userId === interaction.user.id) {
       await interaction.editReply(sample(autoFunaMessages));

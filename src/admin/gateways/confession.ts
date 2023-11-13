@@ -3,7 +3,10 @@ import { BaseGateway } from './base';
 import { ExtendsCommand } from '@discord/decorators/extends-command';
 import { Subcommand } from '@discord/decorators/subcommand';
 import { CommandParameterType } from '@discord/enums/command-parameter-type';
-import { CommandInteraction } from 'discord.js';
+import {
+  CommandInteraction,
+  CommandInteractionOptionResolver,
+} from 'discord.js';
 import { AdminChannelService } from '@admin/services/admin-channel';
 
 @Injectable()
@@ -29,8 +32,9 @@ export class ConfessionGateway extends BaseGateway {
   async setConfessionChannel(interaction: CommandInteraction) {
     await interaction.deferReply();
 
-    const channelId = interaction.options.get('canal').value as string;
+    const options = interaction.options as CommandInteractionOptionResolver;
 
+    const channelId: string = options.getString('canal');
     await this.adminChannelService.setConfessionChannel(channelId);
 
     await interaction.editReply('Canal de confesiones actualizado');

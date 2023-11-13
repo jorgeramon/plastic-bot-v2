@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Subcommand } from '@discord/decorators/subcommand';
 import { CommandParameterType } from '@discord/enums/command-parameter-type';
-import { CommandInteraction, PermissionFlagsBits } from 'discord.js';
+import {
+  CommandInteraction,
+  CommandInteractionOptionResolver,
+  PermissionFlagsBits,
+} from 'discord.js';
 import { Command } from '@discord/decorators/command';
+import { AutoRoleService } from '@autorole/services/autorole';
 
 @Injectable()
 @Command({
@@ -11,6 +16,8 @@ import { Command } from '@discord/decorators/command';
   permissions: [PermissionFlagsBits.ManageMessages],
 })
 export class AutoRoleGateway {
+  constructor(private readonly autoroleService: AutoRoleService) {}
+
   @Subcommand({
     name: 'agregar',
     description: 'Agrega un rol al reaccionar a cierto emoji en un mensaje',
@@ -37,5 +44,19 @@ export class AutoRoleGateway {
       },
     ],
   })
-  async addAutoRole(interaction: CommandInteraction) {}
+  async addAutoRole(interaction: CommandInteraction) {
+    await interaction.deferReply({ ephemeral: true });
+
+    const options = interaction.options as CommandInteractionOptionResolver;
+
+    const message: string = options.getString('id');
+    const emoji: string = options.getString('emoji');
+    const { id: role } = options.getRole('rol');
+
+    await this.autoroleService.addAutoRole({ message, role, emoji });
+
+    await interaction.editReply(
+      'El auto rol ha sido configurado para ese mensaje 🤓',
+    );
+  }
 }
