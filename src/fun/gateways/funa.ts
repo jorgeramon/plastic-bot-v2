@@ -36,7 +36,7 @@ export class FunaGateway {
 
     const options = interaction.options as CommandInteractionOptionResolver;
 
-    const userId: string = options.getString('usuario');
+    const { id: userId } = options.getUser('usuario');
 
     if (userId === interaction.user.id) {
       await interaction.editReply(sample(autoFunaMessages));
