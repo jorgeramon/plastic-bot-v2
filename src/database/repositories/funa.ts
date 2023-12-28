@@ -15,4 +15,19 @@ export class FunaRepository {
   async findByTo(to: string): Promise<FunaDocument[]> {
     return this.model.find({ to }).exec();
   }
+
+  async getUniqueFunedUsers(): Promise<string[]> {
+    const data = await this.model.aggregate(
+      [
+        {
+          $group: {
+            _id: null,
+            users: { $addToSet: "$to"}
+          }
+        }
+      ]
+    ).exec();
+
+    return data.length ? data[0].users : [];
+  }
 }
