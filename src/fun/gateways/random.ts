@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Command } from '@discord/decorators/command';
 import { CommandInteraction } from 'discord.js';
 
 @Injectable()
 export class RandomGateway {
+  private readonly logger: Logger = new Logger(RandomGateway.name);
+
   @Command({
     name: 'puto',
     description: '¿Quién es puto?',
@@ -21,7 +23,7 @@ export class RandomGateway {
         role.position === roles.size - 1,
     );
 
-    const randomUser = funnyRoles.random().members.random();
+    const randomUser = await funnyRoles.random().members.random().fetch();
     interaction.reply(`<@${randomUser.id}> es **puto**`);
   }
 }
