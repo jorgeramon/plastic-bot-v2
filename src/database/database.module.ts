@@ -32,21 +32,21 @@ import { StreamerRepository } from '@database/repositories/streamer';
       },
       {
         name: Streamer.name,
-        schema: StreamerSchema
-      }
+        schema: StreamerSchema,
+      },
     ]),
   ],
   providers: [
     ChannelConfigRepository,
     FunaRepository,
     AutoRoleMessageRepository,
-    StreamerRepository
+    StreamerRepository,
   ],
   exports: [
-    ChannelConfigRepository, 
-    FunaRepository, 
+    ChannelConfigRepository,
+    FunaRepository,
     AutoRoleMessageRepository,
-    StreamerRepository
+    StreamerRepository,
   ],
 })
 export class DatabaseModule {}

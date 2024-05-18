@@ -25,7 +25,9 @@ export class ChannelConfigRepository {
   }
 
   async findOneByType(type: ChannelType): Promise<IChannelConfig | null> {
-    const document: ChannelConfigDocument | null = await this.model.findOne({ type }).exec();
+    const document: ChannelConfigDocument | null = await this.model
+      .findOne({ type })
+      .exec();
     return document !== null ? document.toJSON() : null;
   }
 }

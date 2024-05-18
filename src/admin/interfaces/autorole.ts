@@ -1,4 +1,4 @@
-import { IAutoRoleConfig } from "./autorole-config";
+import { IAutoRoleConfig } from './autorole-config';
 
 export interface IAutoRole {
   message: string;

@@ -20,7 +20,7 @@ import { StreamerModule } from '@streamer/streamer.module';
     DiscordModule,
     FunModule,
     AdminModule,
-    StreamerModule
+    StreamerModule,
   ],
 })
 export class AppModule {}

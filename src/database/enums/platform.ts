@@ -1,3 +1,3 @@
 export enum Platform {
-  TWITCH = 'twitch'
+  TWITCH = 'twitch',
 }

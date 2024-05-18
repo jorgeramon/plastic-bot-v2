@@ -11,9 +11,8 @@ export class AutoRoleService {
   ) {}
 
   async addAutoRole(data: IAutoRoleConfig): Promise<void> {
-    const document: IAutoRole | null = await this.autoRoleMessageRepository.findOneByMessage(
-      data.message,
-    );
+    const document: IAutoRole | null =
+      await this.autoRoleMessageRepository.findOneByMessage(data.message);
 
     if (
       document?.roles?.find(

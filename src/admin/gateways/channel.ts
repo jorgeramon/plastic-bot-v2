@@ -43,7 +43,8 @@ export class ChannelGateway extends BaseGateway {
 
   @Subcommand({
     name: 'streams',
-    description: 'Configura el canal para publicar las notificaciones de streams',
+    description:
+      'Configura el canal para publicar las notificaciones de streams',
     parameters: [
       {
         name: 'canal',
@@ -62,6 +63,8 @@ export class ChannelGateway extends BaseGateway {
     const { id: channelId } = options.getChannel('canal');
     await this.adminChannelService.setChannel(channelId, ChannelType.STREAM);
 
-    await interaction.editReply('Canal de notificaciones de streams actualizado');
+    await interaction.editReply(
+      'Canal de notificaciones de streams actualizado',
+    );
   }
 }

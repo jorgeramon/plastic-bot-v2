@@ -8,6 +8,12 @@ import { RandomGateway } from './gateways/random';
 
 @Module({
   imports: [DatabaseModule],
-  providers: [FunaGateway, ConfessionGateway, FunaService, ConfessionService, RandomGateway],
+  providers: [
+    FunaGateway,
+    ConfessionGateway,
+    FunaService,
+    ConfessionService,
+    RandomGateway,
+  ],
 })
 export class FunModule {}

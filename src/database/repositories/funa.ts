@@ -9,7 +9,7 @@ export class FunaRepository {
   constructor(@InjectModel(Funa.name) private model: Model<Funa>) {}
 
   async create(data: Funa): Promise<IFuna> {
-    const document: FunaDocument = await (new this.model(data).save());
+    const document: FunaDocument = await new this.model(data).save();
     return document.toJSON();
   }
 
@@ -19,16 +19,16 @@ export class FunaRepository {
   }
 
   async getUniqueFunedUsers(): Promise<string[]> {
-    const data = await this.model.aggregate(
-      [
+    const data = await this.model
+      .aggregate([
         {
           $group: {
             _id: null,
-            users: { $addToSet: "$to"}
-          }
-        }
-      ]
-    ).exec();
+            users: { $addToSet: '$to' },
+          },
+        },
+      ])
+      .exec();
 
     return data.length ? data[0].users : [];
   }

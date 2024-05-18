@@ -12,7 +12,7 @@ export class Streamer {
   @Prop({ required: true })
   account: string;
 
-  @Prop({ required: true})
+  @Prop({ required: true })
   platform: Platform;
 }
 

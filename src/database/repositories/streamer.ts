@@ -9,8 +9,25 @@ import { Model } from 'mongoose';
 export class StreamerRepository {
   constructor(@InjectModel(Streamer.name) private model: Model<Streamer>) {}
 
-  async findOneByDiscordId(discord: string, platform: Platform): Promise<IStreamer | null> {
-    const document: StreamerDocument | null = await this.model.findOne({ discord, platform });
+  async findOneByDiscordId(
+    discord: string,
+    platform: Platform,
+  ): Promise<IStreamer | null> {
+    const document: StreamerDocument | null = await this.model.findOne({
+      discord,
+      platform,
+    });
+    return document !== null ? document.toJSON() : null;
+  }
+
+  async findOneByAccount(
+    account: string,
+    platform: Platform,
+  ): Promise<IStreamer | null> {
+    const document: StreamerDocument | null = await this.model.findOne({
+      account,
+      platform,
+    });
     return document !== null ? document.toJSON() : null;
   }
 
@@ -22,5 +39,9 @@ export class StreamerRepository {
     );
 
     return document.toJSON();
+  }
+
+  async deleteById(_id: string): Promise<void> {
+    await this.model.findByIdAndDelete(_id);
   }
 }

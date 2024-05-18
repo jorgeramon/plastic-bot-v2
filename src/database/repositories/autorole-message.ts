@@ -14,7 +14,9 @@ export class AutoRoleMessageRepository {
   ) {}
 
   async findOneByMessage(message: string): Promise<IAutoRole | null> {
-    const document: AutoRoleMessageDocument | null = await this.model.findOne({ message }).exec();
+    const document: AutoRoleMessageDocument | null = await this.model
+      .findOne({ message })
+      .exec();
     return document !== null ? document.toJSON() : null;
   }
 
