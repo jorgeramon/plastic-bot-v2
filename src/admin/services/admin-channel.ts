@@ -8,9 +8,9 @@ export class AdminChannelService {
     private readonly channelConfigRepository: ChannelConfigRepository,
   ) {}
 
-  async setConfessionChannel(channelId: string): Promise<void> {
+  async setChannel(channelId: string, type: ChannelType): Promise<void> {
     await this.channelConfigRepository.upsert({
-      type: ChannelType.CONFESSION,
+      type,
       channel: channelId,
     });
   }

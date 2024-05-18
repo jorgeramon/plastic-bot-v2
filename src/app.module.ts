@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { DiscordModule } from '@discord/discord.module';
 import { FunModule } from '@fun/fun.module';
-import { MongooseModule } from '@nestjs/mongoose';
 import { Environment } from '@common/enums/environment';
 import { AdminModule } from '@admin/admin.module';
+import { StreamerModule } from '@streamer/streamer.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AdminModule } from '@admin/admin.module';
     DiscordModule,
     FunModule,
     AdminModule,
+    StreamerModule
   ],
 })
 export class AppModule {}

@@ -22,7 +22,8 @@
       "@discord/*": ["./discord/*"],
       "@fun/*": ["./fun/*"],
       "@admin/*": ["./admin/*"],
-      "@database/*": ["./database/*"]
+      "@database/*": ["./database/*"],
+      "@streamer/*": ["./streamer/*"]
     }
   }
 }

@@ -8,10 +8,11 @@ import {
   CommandInteractionOptionResolver,
 } from 'discord.js';
 import { AdminChannelService } from '@admin/services/admin-channel';
+import { ChannelType } from '@database/enums/channel-type';
 
 @Injectable()
 @ExtendsCommand()
-export class ConfessionGateway extends BaseGateway {
+export class ChannelGateway extends BaseGateway {
   constructor(private readonly adminChannelService: AdminChannelService) {
     super();
   }
@@ -34,9 +35,33 @@ export class ConfessionGateway extends BaseGateway {
 
     const options = interaction.options as CommandInteractionOptionResolver;
 
-    const channelId: string = options.getString('canal');
-    await this.adminChannelService.setConfessionChannel(channelId);
+    const { id: channelId } = options.getChannel('canal');
+    await this.adminChannelService.setChannel(channelId, ChannelType.STREAM);
 
     await interaction.editReply('Canal de confesiones actualizado');
+  }
+
+  @Subcommand({
+    name: 'streams',
+    description: 'Configura el canal para publicar las notificaciones de streams',
+    parameters: [
+      {
+        name: 'canal',
+        description:
+          'Canal donde se publicarán las notificaciones de streams al utilizar el comando',
+        type: CommandParameterType.Channel,
+        required: true,
+      },
+    ],
+  })
+  async setStreamChannel(interaction: CommandInteraction) {
+    await interaction.deferReply();
+
+    const options = interaction.options as CommandInteractionOptionResolver;
+
+    const { id: channelId } = options.getChannel('canal');
+    await this.adminChannelService.setChannel(channelId, ChannelType.STREAM);
+
+    await interaction.editReply('Canal de notificaciones de streams actualizado');
   }
 }

@@ -1,3 +1,4 @@
+import { IAutoRole } from '@admin/interfaces/autorole';
 import {
   AutoRoleMessage,
   AutoRoleMessageDocument,
@@ -12,19 +13,22 @@ export class AutoRoleMessageRepository {
     @InjectModel(AutoRoleMessage.name) private model: Model<AutoRoleMessage>,
   ) {}
 
-  findOneByMessage(message: string): Promise<AutoRoleMessageDocument> {
-    return this.model.findOne({ message }).exec();
+  async findOneByMessage(message: string): Promise<IAutoRole | null> {
+    const document: AutoRoleMessageDocument | null = await this.model.findOne({ message }).exec();
+    return document !== null ? document.toJSON() : null;
   }
 
-  upsertPush(
+  async upsertPush(
     message: string,
     role: string,
     emoji: string,
-  ): Promise<AutoRoleMessageDocument> {
-    return this.model.findOneAndUpdate(
+  ): Promise<IAutoRole> {
+    const document: AutoRoleMessageDocument = await this.model.findOneAndUpdate(
       { message },
       { $push: { roles: { role, emoji } } },
       { new: true, upsert: true },
     );
+
+    return document.toJSON();
   }
 }

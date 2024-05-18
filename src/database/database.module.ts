@@ -11,7 +11,9 @@ import {
   AutoRoleMessage,
   AutoRoleMessageSchema,
 } from '@database/schemas/autorole-message';
-import { AutoRoleMessageRepository } from './repositories/autorole-message';
+import { AutoRoleMessageRepository } from '@database/repositories/autorole-message';
+import { Streamer, StreamerSchema } from '@database/schemas/streamer';
+import { StreamerRepository } from '@database/repositories/streamer';
 
 @Module({
   imports: [
@@ -28,13 +30,23 @@ import { AutoRoleMessageRepository } from './repositories/autorole-message';
         name: AutoRoleMessage.name,
         schema: AutoRoleMessageSchema,
       },
+      {
+        name: Streamer.name,
+        schema: StreamerSchema
+      }
     ]),
   ],
   providers: [
     ChannelConfigRepository,
     FunaRepository,
     AutoRoleMessageRepository,
+    StreamerRepository
   ],
-  exports: [ChannelConfigRepository, FunaRepository, AutoRoleMessageRepository],
+  exports: [
+    ChannelConfigRepository, 
+    FunaRepository, 
+    AutoRoleMessageRepository,
+    StreamerRepository
+  ],
 })
 export class DatabaseModule {}

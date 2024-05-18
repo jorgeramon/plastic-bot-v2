@@ -1,4 +1,5 @@
 import { IAutoRole } from '@admin/interfaces/autorole';
+import { IAutoRoleConfig } from '@admin/interfaces/autorole-config';
 import { RuntimeException } from '@common/exceptions/runtime';
 import { AutoRoleMessageRepository } from '@database/repositories/autorole-message';
 import { Injectable } from '@nestjs/common';
@@ -9,8 +10,8 @@ export class AutoRoleService {
     private readonly autoRoleMessageRepository: AutoRoleMessageRepository,
   ) {}
 
-  async addAutoRole(data: IAutoRole): Promise<void> {
-    const document = await this.autoRoleMessageRepository.findOneByMessage(
+  async addAutoRole(data: IAutoRoleConfig): Promise<void> {
+    const document: IAutoRole | null = await this.autoRoleMessageRepository.findOneByMessage(
       data.message,
     );
 

@@ -1,4 +1,5 @@
 import { Funa, FunaDocument } from '@database/schemas/funa';
+import { IFuna } from '@fun/interfaces/funa';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -7,13 +8,14 @@ import { Model } from 'mongoose';
 export class FunaRepository {
   constructor(@InjectModel(Funa.name) private model: Model<Funa>) {}
 
-  async create(data: Funa): Promise<FunaDocument> {
-    const document = new this.model(data);
-    return document.save();
+  async create(data: Funa): Promise<IFuna> {
+    const document: FunaDocument = await (new this.model(data).save());
+    return document.toJSON();
   }
 
-  async findByTo(to: string): Promise<FunaDocument[]> {
-    return this.model.find({ to }).exec();
+  async findByTo(to: string): Promise<IFuna[]> {
+    const documents: FunaDocument[] = await this.model.find({ to }).exec();
+    return documents.map((document) => document.toJSON());
   }
 
   async getUniqueFunedUsers(): Promise<string[]> {

@@ -1,3 +1,4 @@
+import { IChannelConfig } from '@admin/interfaces/channel-config';
 import { ChannelType } from '@database/enums/channel-type';
 import {
   ChannelConfig,
@@ -13,15 +14,18 @@ export class ChannelConfigRepository {
     @InjectModel(ChannelConfig.name) private model: Model<ChannelConfig>,
   ) {}
 
-  upsert(data: ChannelConfig): Promise<ChannelConfigDocument> {
-    return this.model.findOneAndUpdate(
+  async upsert(data: ChannelConfig): Promise<IChannelConfig> {
+    const document: ChannelConfigDocument = await this.model.findOneAndUpdate(
       { type: data.type },
       { channel: data.channel },
       { new: true, upsert: true },
     );
+
+    return document.toJSON();
   }
 
-  findOneByType(type: ChannelType): Promise<ChannelConfigDocument | null> {
-    return this.model.findOne({ type }).exec();
+  async findOneByType(type: ChannelType): Promise<IChannelConfig | null> {
+    const document: ChannelConfigDocument | null = await this.model.findOne({ type }).exec();
+    return document !== null ? document.toJSON() : null;
   }
 }
