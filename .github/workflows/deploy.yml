@@ -16,5 +16,6 @@ jobs:
           script: |
             cd plastic-bot-v2
             git pull origin master
+            yarn install
             yarn build
             pm2 restart pm2.yml
