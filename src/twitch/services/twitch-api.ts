@@ -1,14 +1,16 @@
 import { Environment } from '@common/enums/environment';
-import { TwitchEndpoints } from '@common/enums/twitch-endpoints';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Endpoints } from '@twitch/enums/endpoints';
 import { RefreshToken } from '@twitch/decorators/refresh-token';
 import { ITwitchResponse } from '@twitch/interfaces/twitch-response';
+import { ITwitchStream } from '@twitch/interfaces/twitch-stream';
 import { ITwitchSubscription } from '@twitch/interfaces/twitch-subscription';
 import { ITwitchToken } from '@twitch/interfaces/twitch-token';
 import { ITwitchUser } from '@twitch/interfaces/twitch-user';
 import axios, { AxiosResponse } from 'axios';
 import { URLSearchParams } from 'url';
+import { ITwitchGame } from '@twitch/interfaces/twitch-game';
 
 @Injectable()
 export class TwitchApiService {
@@ -34,7 +36,7 @@ export class TwitchApiService {
     this.logger.debug(`Getting "${account}" user information...`);
 
     const response: AxiosResponse<ITwitchResponse<ITwitchUser>> =
-      await axios.get(TwitchEndpoints.USERS, {
+      await axios.get(Endpoints.USERS, {
         params: {
           login: account,
         },
@@ -53,7 +55,7 @@ export class TwitchApiService {
     this.logger.debug('Getting current subscriptions...');
 
     const response: AxiosResponse<ITwitchResponse<ITwitchSubscription>> =
-      await axios.get(TwitchEndpoints.SUBSCRIPTIONS, {
+      await axios.get(Endpoints.SUBSCRIPTIONS, {
         headers: {
           Authorization: `Bearer ${this.token}`,
           'Client-Id': this.CLIENT_ID,
@@ -72,7 +74,7 @@ export class TwitchApiService {
 
     const response: AxiosResponse<ITwitchResponse<ITwitchSubscription>> =
       await axios.post(
-        TwitchEndpoints.SUBSCRIPTIONS,
+        Endpoints.SUBSCRIPTIONS,
         {
           type: 'stream.online',
           version: 1,
@@ -81,7 +83,7 @@ export class TwitchApiService {
           },
           transport: {
             method: 'webhook',
-            callback: TwitchEndpoints.CALLBACK,
+            callback: Endpoints.CALLBACK,
             secret: this.VERIFICATION_SECRET,
           },
         },
@@ -100,7 +102,7 @@ export class TwitchApiService {
   async deleteSubscription(id: string): Promise<void> {
     this.logger.debug(`Deleting subscription "${id}"...`);
 
-    await axios.delete(TwitchEndpoints.SUBSCRIPTIONS, {
+    await axios.delete(Endpoints.SUBSCRIPTIONS, {
       headers: {
         Authorization: `Bearer ${this.token}`,
         'Client-Id': this.CLIENT_ID,
@@ -111,11 +113,47 @@ export class TwitchApiService {
     });
   }
 
+  @RefreshToken()
+  async getStreamByUser(id: string): Promise<ITwitchStream | null> {
+    this.logger.debug(`Getting "${id}" stream information...`);
+
+    const response: AxiosResponse<ITwitchResponse<ITwitchStream>> =
+      await axios.get(Endpoints.STREAMS, {
+        params: {
+          user_id: id,
+        },
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+          'Client-Id': this.CLIENT_ID,
+        },
+      });
+
+    return response.data.data[0] || null;
+  }
+
+  @RefreshToken()
+  async getGameById(id: string): Promise<ITwitchGame | null> {
+    this.logger.debug(`Getting "${id}" game information...`);
+
+    const response: AxiosResponse<ITwitchResponse<ITwitchGame>> =
+      await axios.get(Endpoints.GAMES, {
+        params: {
+          id,
+        },
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+          'Client-Id': this.CLIENT_ID,
+        },
+      });
+
+    return response.data.data[0] || null;
+  }
+
   private async authorize(): Promise<void> {
     this.logger.debug('Getting authorization token...');
 
     const response: AxiosResponse<ITwitchToken> = await axios.post(
-      TwitchEndpoints.TOKEN,
+      Endpoints.TOKEN,
       new URLSearchParams({
         client_id: this.CLIENT_ID,
         client_secret: this.CLIENT_SECRET,
