@@ -88,7 +88,7 @@ export class TwitchGateway {
       await this.streamerService.findTwitchAccount(discord);
 
     if (twitch) {
-      await this.streamerService.deleteAccount(twitch._id);
+      await this.streamerService.deleteTwitchSubscription(twitch);
     }
 
     await interaction.editReply(

@@ -48,4 +48,12 @@ export class StreamerService {
 
     return this.upsertTwitchAccount(discord, account, subscription);
   }
+
+  async deleteTwitchSubscription(streamer: IStreamer) {
+    if (streamer.metadata) {
+      await this.twitchService.deleteSubscriptionById(streamer.metadata.id);
+    } else {
+      await this.twitchService.deleteSubscriptionByAccount(streamer.account);
+    }
+  }
 }

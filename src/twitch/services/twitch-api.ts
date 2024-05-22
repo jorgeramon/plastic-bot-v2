@@ -53,10 +53,13 @@ export class TwitchApiService {
     this.logger.debug('Getting current subscriptions...');
 
     const response: AxiosResponse<ITwitchResponse<ITwitchSubscription>> =
-      await axios.get(`${TwitchEndpoints.SUBSCRIPTIONS}/?first=100`, {
+      await axios.get(TwitchEndpoints.SUBSCRIPTIONS, {
         headers: {
           Authorization: `Bearer ${this.token}`,
           'Client-Id': this.CLIENT_ID,
+        },
+        params: {
+          first: 100,
         },
       });
 
@@ -91,6 +94,21 @@ export class TwitchApiService {
       );
 
     return response.data.data[0];
+  }
+
+  @RefreshToken()
+  async deleteSubscription(id: string): Promise<void> {
+    this.logger.debug(`Deleting subscription "${id}"...`);
+
+    await axios.delete(TwitchEndpoints.SUBSCRIPTIONS, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+        'Client-Id': this.CLIENT_ID,
+      },
+      params: {
+        id,
+      },
+    });
   }
 
   private async authorize(): Promise<void> {
