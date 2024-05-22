@@ -50,7 +50,7 @@ export class TwitchService {
 
     const subscription = await this.getSubscriptionByUser(user.id);
 
-    if (subscription) {
+    if (!subscription) {
       this.logger.warn(
         `No subscription found for account: ${account} - ${user.id}`,
       );

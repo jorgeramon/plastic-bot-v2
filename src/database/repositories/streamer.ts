@@ -34,7 +34,11 @@ export class StreamerRepository {
   async upsert(data: Streamer): Promise<IStreamer> {
     const document: StreamerDocument = await this.model.findOneAndUpdate(
       { discord: data.discord },
-      { account: data.account, platform: data.platform },
+      {
+        account: data.account,
+        platform: data.platform,
+        metadata: data.metadata || null,
+      },
       { new: true, upsert: true },
     );
 

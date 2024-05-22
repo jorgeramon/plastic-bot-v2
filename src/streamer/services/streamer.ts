@@ -55,5 +55,7 @@ export class StreamerService {
     } else {
       await this.twitchService.deleteSubscriptionByAccount(streamer.account);
     }
+
+    await this.deleteAccount(streamer._id);
   }
 }
