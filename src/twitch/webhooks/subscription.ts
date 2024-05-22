@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Headers, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Logger, Post } from '@nestjs/common';
 import { ITwitchSubscription } from '@twitch/interfaces/twitch-subscription';
 import { IWebhookVerification } from '@twitch/interfaces/webhook-verification';
 import { TwitchApiService } from '@twitch/services/twitch-api';
 
 @Controller('webhooks/twitch')
 export class SubscriptionWebhook {
+  private readonly logger: Logger = new Logger(SubscriptionWebhook.name);
+
   constructor(private readonly twitchApiService: TwitchApiService) {}
 
   @Get('health')
@@ -25,5 +27,10 @@ export class SubscriptionWebhook {
     if (verification === 'webhook_callback_verification') {
       return (<IWebhookVerification>data).challenge;
     }
+
+    const subscription: ITwitchSubscription = <ITwitchSubscription>data;
+
+    this.logger.debug(`Streamer is online!`);
+    this.logger.debug(subscription);
   }
 }
