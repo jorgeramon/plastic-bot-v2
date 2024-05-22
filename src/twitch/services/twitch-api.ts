@@ -32,13 +32,31 @@ export class TwitchApiService {
   }
 
   @RefreshToken()
-  async getUserByAccount(account: string): Promise<ITwitchUser | null> {
-    this.logger.debug(`Getting "${account}" user information...`);
+  async getUserById(id: string): Promise<ITwitchUser | null> {
+    this.logger.debug(`Getting "${id}" user information...`);
 
     const response: AxiosResponse<ITwitchResponse<ITwitchUser>> =
       await axios.get(Endpoints.USERS, {
         params: {
-          login: account,
+          id,
+        },
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+          'Client-Id': this.CLIENT_ID,
+        },
+      });
+
+    return response.data.data[0] || null;
+  }
+
+  @RefreshToken()
+  async getUserByLogin(login: string): Promise<ITwitchUser | null> {
+    this.logger.debug(`Getting "${login}" user information...`);
+
+    const response: AxiosResponse<ITwitchResponse<ITwitchUser>> =
+      await axios.get(Endpoints.USERS, {
+        params: {
+          login,
         },
         headers: {
           Authorization: `Bearer ${this.token}`,

@@ -10,6 +10,14 @@ export class TwitchService {
 
   constructor(private readonly twitchApiService: TwitchApiService) {}
 
+  async getUserById(id: string): Promise<ITwitchUser | null> {
+    return this.twitchApiService.getUserById(id);
+  }
+
+  async getUserByLogin(login: string): Promise<ITwitchUser | null> {
+    return this.twitchApiService.getUserByLogin(login);
+  }
+
   // TODO: Paginar hasta encontrar o descartar al usuario
   async getSubscriptionByUser(id: string): Promise<ITwitchSubscription | null> {
     const subscriptions = await this.twitchApiService.getSubscriptions();
@@ -22,10 +30,8 @@ export class TwitchService {
     );
   }
 
-  async createSubscription(account: string): Promise<ITwitchSubscription> {
-    const user: ITwitchUser = await this.twitchApiService.getUserByAccount(
-      account,
-    );
+  async createSubscription(login: string): Promise<ITwitchSubscription> {
+    const user: ITwitchUser = await this.twitchApiService.getUserByLogin(login);
 
     if (!user) {
       throw new RuntimeException(
@@ -41,14 +47,17 @@ export class TwitchService {
   async deleteSubscriptionByAccount(account: string): Promise<void> {
     this.logger.debug(`Deleting subscription by account: ${account}...`);
 
-    const user = await this.twitchApiService.getUserByAccount(account);
+    const user: ITwitchUser | null = await this.twitchApiService.getUserById(
+      account,
+    );
 
     if (!user) {
       this.logger.warn(`No user found for account: ${account}`);
       return;
     }
 
-    const subscription = await this.getSubscriptionByUser(user.id);
+    const subscription: ITwitchSubscription | null =
+      await this.getSubscriptionByUser(user.id);
 
     if (!subscription) {
       this.logger.warn(

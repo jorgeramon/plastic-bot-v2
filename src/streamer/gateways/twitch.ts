@@ -8,6 +8,7 @@ import {
 import { StreamerService } from '@streamer/services/streamer';
 import { IStreamer } from '@streamer/interfaces/streamer';
 import { Subcommand } from '@discord/decorators/subcommand';
+import { ITwitchStreamer } from '@streamer/interfaces/twitch-streamer';
 
 @Injectable()
 @Command({
@@ -27,12 +28,12 @@ export class TwitchGateway {
 
     const discord: string = interaction.user.id;
 
-    const twitch: IStreamer | null =
-      await this.streamerService.findTwitchAccount(discord);
+    const twitch: ITwitchStreamer | null =
+      await this.streamerService.getTwitchAccountByDiscord(discord);
 
     await interaction.editReply(
       twitch
-        ? `La cuenta vinculada es: **${twitch.account}** 🤓☝️`
+        ? `La cuenta vinculada es: **${twitch.login}** 🤓☝️`
         : 'No has vinculado ninguna cuenta de Twitch 🥺',
     );
   }
@@ -55,22 +56,22 @@ export class TwitchGateway {
     const options = interaction.options as CommandInteractionOptionResolver;
 
     const discord: string = interaction.user.id;
-    const account: string = options.getString('cuenta');
+    const login: string = options.getString('cuenta');
 
-    const existing: IStreamer | null =
-      await this.streamerService.findTwitchAccountByName(account);
+    const streamer: ITwitchStreamer | null =
+      await this.streamerService.getTwitchAccountByLogin(login);
 
-    if (existing) {
+    if (streamer) {
       await interaction.editReply(
-        existing.discord === discord
+        streamer.discord === discord
           ? 'Ya tienes vinculada esta cuenta 😒'
           : 'Ésta cuenta ha sido vinculada por otra persona, si la cuenta es tuya por favor contacta a un administrador para resolver el caso.',
       );
     } else {
-      await this.streamerService.createTwitchSubscription(discord, account);
+      await this.streamerService.createTwitchSubscription(discord, login);
 
       await interaction.editReply(
-        'Tu cuenta ha sido vinculada. Recuerda que solo se enviarán notificaciones si haces directo de: **Guitar Hero**, **Rock Band**, **Rocksmith**, **Clone Hero**, **YARG** y **Fortnite**.',
+        'Tu cuenta ha sido vinculada. Recuerda que solo se enviarán notificaciones si haces directo de: **Guitar Hero, Rock Band, Rocksmith, Clone Hero, Yarg, Fortnite, Osu! y algunos juegos de ritmo más**.',
       );
     }
   }
@@ -84,15 +85,15 @@ export class TwitchGateway {
 
     const discord: string = interaction.user.id;
 
-    const twitch: IStreamer | null =
-      await this.streamerService.findTwitchAccount(discord);
+    const streamer: IStreamer | null =
+      await this.streamerService.findStreamerByDiscord(discord);
 
-    if (twitch) {
-      await this.streamerService.deleteTwitchSubscription(twitch);
+    if (streamer) {
+      await this.streamerService.deleteTwitchSubscription(streamer);
     }
 
     await interaction.editReply(
-      twitch
+      streamer
         ? `La cuenta ha sido desvinculada 🤓☝️`
         : 'No tienes ninguna cuenta vinculada 😒',
     );

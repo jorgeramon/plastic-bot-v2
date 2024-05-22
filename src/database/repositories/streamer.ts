@@ -9,7 +9,7 @@ import { Model } from 'mongoose';
 export class StreamerRepository {
   constructor(@InjectModel(Streamer.name) private model: Model<Streamer>) {}
 
-  async findOneByDiscordId(
+  async findOneByDiscord(
     discord: string,
     platform: Platform,
   ): Promise<IStreamer | null> {
