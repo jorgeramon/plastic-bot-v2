@@ -26,10 +26,15 @@ export class TwitchGateway {
   async read(interaction: CommandInteraction) {
     await interaction.deferReply({ ephemeral: true });
 
+    const { guild } = interaction;
+
     const discord: string = interaction.user.id;
 
     const twitch: ITwitchStreamer | null =
-      await this.streamerService.getTwitchAccountByDiscord(discord);
+      await this.streamerService.getTwitchAccountByDiscordAndGuild(
+        discord,
+        guild.id,
+      );
 
     await interaction.editReply(
       twitch
@@ -53,13 +58,18 @@ export class TwitchGateway {
   async link(interaction: CommandInteraction) {
     await interaction.deferReply({ ephemeral: true });
 
+    const { guild } = interaction;
+
     const options = interaction.options as CommandInteractionOptionResolver;
 
     const discord: string = interaction.user.id;
     const login: string = options.getString('cuenta');
 
     const streamer: ITwitchStreamer | null =
-      await this.streamerService.getTwitchAccountByLogin(login);
+      await this.streamerService.getTwitchAccountByLoginAndGuild(
+        login,
+        guild.id,
+      );
 
     if (streamer) {
       await interaction.editReply(
@@ -68,7 +78,11 @@ export class TwitchGateway {
           : 'Ésta cuenta ha sido vinculada por otra persona, si la cuenta es tuya por favor contacta a un administrador para resolver el caso.',
       );
     } else {
-      await this.streamerService.createTwitchSubscription(discord, login);
+      await this.streamerService.createTwitchSubscription(
+        discord,
+        login,
+        guild.id,
+      );
 
       await interaction.editReply(
         'Tu cuenta ha sido vinculada. Recuerda que solo se enviarán notificaciones si haces directo de: **Guitar Hero, Rock Band, Rocksmith, Clone Hero, Yarg, Fortnite, Osu! y algunos juegos de ritmo más**.',
@@ -83,10 +97,15 @@ export class TwitchGateway {
   async unlink(interaction: CommandInteraction) {
     await interaction.deferReply({ ephemeral: true });
 
+    const { guild } = interaction;
+
     const discord: string = interaction.user.id;
 
     const streamer: IStreamer | null =
-      await this.streamerService.findStreamerByDiscord(discord);
+      await this.streamerService.findStreamerByDiscordAndGuild(
+        discord,
+        guild.id,
+      );
 
     if (streamer) {
       await this.streamerService.deleteTwitchSubscription(streamer);

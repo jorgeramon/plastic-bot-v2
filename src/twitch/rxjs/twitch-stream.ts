@@ -1,6 +1,8 @@
+import { Injectable } from '@nestjs/common';
 import { ITwitchStream } from '@twitch/interfaces/twitch-stream';
 import { Observable, Subject } from 'rxjs';
 
+@Injectable()
 export class TwitchStreamRx {
   private readonly $notification = new Subject<ITwitchStream>();
 

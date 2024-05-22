@@ -15,11 +15,16 @@ export class StreamerService {
     private readonly twitchService: TwitchService,
   ) {}
 
-  async getTwitchAccountByDiscord(
+  async getTwitchAccountByDiscordAndGuild(
     discord: string,
+    guild: string,
   ): Promise<ITwitchStreamer | null> {
     const streamer: IStreamer | null =
-      await this.streamerRepository.findOneByDiscord(discord, Platform.TWITCH);
+      await this.streamerRepository.findOneByDiscordAndGuild(
+        discord,
+        guild,
+        Platform.TWITCH,
+      );
 
     if (!streamer) {
       return null;
@@ -40,8 +45,9 @@ export class StreamerService {
     };
   }
 
-  async getTwitchAccountByLogin(
+  async getTwitchAccountByLoginAndGuild(
     login: string,
+    guild: string,
   ): Promise<ITwitchStreamer | null> {
     const user: ITwitchUser | null = await this.twitchService.getUserByLogin(
       login,
@@ -52,7 +58,11 @@ export class StreamerService {
     }
 
     const streamer: IStreamer | null =
-      await this.streamerRepository.findOneByAccount(user.id, Platform.TWITCH);
+      await this.streamerRepository.findOneByAccountAndGuild(
+        user.id,
+        guild,
+        Platform.TWITCH,
+      );
 
     if (!streamer) {
       return null;
@@ -68,6 +78,7 @@ export class StreamerService {
   async createTwitchSubscription(
     discord: string,
     login: string,
+    guild: string,
   ): Promise<IStreamer> {
     const subscription: ITwitchSubscription =
       await this.twitchService.createSubscription(login);
@@ -75,6 +86,7 @@ export class StreamerService {
     return this.upsertTwitchStreamer(
       discord,
       subscription.condition.broadcaster_user_id,
+      guild,
       subscription,
     );
   }
@@ -89,22 +101,27 @@ export class StreamerService {
     await this.deleteStreamerById(streamer._id);
   }
 
-  findStreamerByDiscord(account: string): Promise<IStreamer | null> {
-    return this.streamerRepository.findOneByDiscord(account, Platform.TWITCH);
-  }
-
-  findStreamerByAccount(account: string): Promise<IStreamer | null> {
-    return this.streamerRepository.findOneByAccount(account, Platform.TWITCH);
+  findStreamerByDiscordAndGuild(
+    account: string,
+    guild: string,
+  ): Promise<IStreamer | null> {
+    return this.streamerRepository.findOneByDiscordAndGuild(
+      account,
+      guild,
+      Platform.TWITCH,
+    );
   }
 
   upsertTwitchStreamer(
     discord: string,
     account: string,
+    guild: string,
     subscription: ITwitchSubscription,
   ): Promise<IStreamer> {
     return this.streamerRepository.upsert({
       discord,
       account,
+      guild,
       platform: Platform.TWITCH,
       metadata: subscription,
     });

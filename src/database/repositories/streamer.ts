@@ -9,25 +9,31 @@ import { Model } from 'mongoose';
 export class StreamerRepository {
   constructor(@InjectModel(Streamer.name) private model: Model<Streamer>) {}
 
-  async findOneByDiscord(
+  async findOneByDiscordAndGuild(
     discord: string,
+    guild: string,
     platform: Platform,
   ): Promise<IStreamer | null> {
     const document: StreamerDocument | null = await this.model.findOne({
       discord,
+      guild,
       platform,
     });
+
     return document !== null ? document.toJSON() : null;
   }
 
-  async findOneByAccount(
+  async findOneByAccountAndGuild(
     account: string,
+    guild: string,
     platform: Platform,
   ): Promise<IStreamer | null> {
     const document: StreamerDocument | null = await this.model.findOne({
       account,
+      guild,
       platform,
     });
+
     return document !== null ? document.toJSON() : null;
   }
 
@@ -37,6 +43,7 @@ export class StreamerRepository {
       {
         account: data.account,
         platform: data.platform,
+        guild: data.guild,
         metadata: data.metadata || null,
       },
       { new: true, upsert: true },

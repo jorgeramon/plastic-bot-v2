@@ -15,6 +15,9 @@ export class Streamer {
   @Prop({ required: true })
   platform: Platform;
 
+  @Prop({ required: true })
+  guild: string;
+
   @Prop({ type: MongooseSchema.Types.Mixed })
   metadata?: any;
 }
