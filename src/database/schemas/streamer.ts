@@ -1,6 +1,6 @@
 import { Platform } from '@database/enums/platform';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
 export type StreamerDocument = HydratedDocument<Streamer>;
 
@@ -14,6 +14,9 @@ export class Streamer {
 
   @Prop({ required: true })
   platform: Platform;
+
+  @Prop({ type: MongooseSchema.Types.Mixed })
+  metadata?: any;
 }
 
 export const StreamerSchema = SchemaFactory.createForClass(Streamer);

@@ -26,6 +26,7 @@
     "@nestjs/mongoose": "^10.0.1",
     "@nestjs/platform-express": "^10.0.0",
     "@types/lodash": "^4.14.198",
+    "axios": "^1.7.1",
     "discord.js": "^14.13.0",
     "lodash": "^4.17.21",
     "mongoose": "^7.5.2",

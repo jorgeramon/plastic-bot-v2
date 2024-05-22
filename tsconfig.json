@@ -23,7 +23,8 @@
       "@fun/*": ["./fun/*"],
       "@admin/*": ["./admin/*"],
       "@database/*": ["./database/*"],
-      "@streamer/*": ["./streamer/*"]
+      "@streamer/*": ["./streamer/*"],
+      "@twitch/*": ["./twitch/*"]
     }
   }
 }

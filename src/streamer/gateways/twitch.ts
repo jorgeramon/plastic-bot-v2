@@ -6,7 +6,6 @@ import {
   CommandInteractionOptionResolver,
 } from 'discord.js';
 import { StreamerService } from '@streamer/services/streamer';
-import { Platform } from '@database/enums/platform';
 import { IStreamer } from '@streamer/interfaces/streamer';
 import { Subcommand } from '@discord/decorators/subcommand';
 
@@ -68,7 +67,8 @@ export class TwitchGateway {
           : 'Ésta cuenta ha sido vinculada por otra persona, si la cuenta es tuya por favor contacta a un administrador para resolver el caso.',
       );
     } else {
-      await this.streamerService.upsertTwitchAccount(discord, account);
+      await this.streamerService.createTwitchSubscription(discord, account);
+
       await interaction.editReply(
         'Tu cuenta ha sido vinculada. Recuerda que solo se enviarán notificaciones si haces directo de: **Guitar Hero**, **Rock Band**, **Rocksmith**, **Clone Hero**, **YARG** y **Fortnite**.',
       );
