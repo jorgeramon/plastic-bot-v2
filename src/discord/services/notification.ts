@@ -16,6 +16,7 @@ import { ChannelConfigRepository } from '@database/repositories/channel-config';
 import { IChannelConfig } from '@admin/interfaces/channel-config';
 import { ChannelType } from '@database/enums/channel-type';
 import { Platform } from '@database/enums/platform';
+import { IStreamPlatform } from '@discord/interfaces/stream-platform';
 
 @Injectable()
 export class NotificationService implements OnApplicationBootstrap {
@@ -95,16 +96,20 @@ export class NotificationService implements OnApplicationBootstrap {
     user: User,
     stream: IStreamNotification,
   ): MessageCreateOptions {
+    const platform = this.getPlatform(stream.platform);
+
     const builder = new EmbedBuilder()
       .setTitle(
-        `¡${user.displayName} ha comenzado directo en ${this.getPlatform(
-          stream.platform,
-        )}!`,
+        `¡${user.displayName} ha comenzado directo en ${platform.name}!`,
       )
       .setDescription(
         `<@${user.id}> está transmitiendo **${stream.game}**. Ven y disfruta de su contenido :D`,
       )
-      .setThumbnail(this.getThumbnail(stream.platform))
+      .setThumbnail(user.avatarURL())
+      .setFooter({
+        iconURL: platform.logo,
+        text: platform.name,
+      })
       .setURL(stream.link);
 
     if (stream.preview) {
@@ -116,23 +121,13 @@ export class NotificationService implements OnApplicationBootstrap {
     };
   }
 
-  private getPlatform(platform: Platform): string {
+  private getPlatform(platform: Platform): IStreamPlatform {
     switch (platform) {
       case Platform.TWITCH:
-        return 'Twitch';
-
-      default:
-        return 'una plataforma desconocida xd';
-    }
-  }
-
-  private getThumbnail(platform: Platform): string {
-    switch (platform) {
-      case Platform.TWITCH:
-        return 'https://img.freepik.com/premium-vector/twitch-logo_578229-259.jpg';
-
-      default:
-        return 'https://support.discord.com/hc/user_images/PRywUXcqg0v5DD6s7C3LyQ.jpeg';
+        return {
+          name: 'Twitch',
+          logo: 'https://img.freepik.com/premium-vector/twitch-logo_578229-259.jpg',
+        };
     }
   }
 }
