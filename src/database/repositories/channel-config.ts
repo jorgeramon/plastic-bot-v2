@@ -17,17 +17,21 @@ export class ChannelConfigRepository {
   async upsert(data: ChannelConfig): Promise<IChannelConfig> {
     const document: ChannelConfigDocument = await this.model.findOneAndUpdate(
       { type: data.type },
-      { channel: data.channel },
+      { channel: data.channel, guild: data.guild },
       { new: true, upsert: true },
     );
 
     return document.toJSON();
   }
 
-  async findOneByType(type: ChannelType): Promise<IChannelConfig | null> {
+  async findOneByTypeAndGuild(
+    type: ChannelType,
+    guild: string,
+  ): Promise<IChannelConfig | null> {
     const document: ChannelConfigDocument | null = await this.model
-      .findOne({ type })
+      .findOne({ type, guild })
       .exec();
+
     return document !== null ? document.toJSON() : null;
   }
 }

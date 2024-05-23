@@ -8,9 +8,10 @@ export class ConfessionService {
     private readonly channelConfigRepository: ChannelConfigRepository,
   ) {}
 
-  async getChannel(): Promise<string | null> {
-    const config = await this.channelConfigRepository.findOneByType(
+  async getChannel(guild: string): Promise<string | null> {
+    const config = await this.channelConfigRepository.findOneByTypeAndGuild(
       ChannelType.CONFESSION,
+      guild,
     );
     return config?.channel;
   }

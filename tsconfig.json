@@ -24,7 +24,8 @@
       "@admin/*": ["./admin/*"],
       "@database/*": ["./database/*"],
       "@streamer/*": ["./streamer/*"],
-      "@twitch/*": ["./twitch/*"]
+      "@twitch/*": ["./twitch/*"],
+      "@reactive/*": ["./reactive/*"]
     }
   }
 }

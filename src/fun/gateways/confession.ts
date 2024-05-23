@@ -71,7 +71,7 @@ export class ConfessionGateway {
       };
     }
 
-    const channelId = await this.confessionService.getChannel();
+    const channelId = await this.confessionService.getChannel(guild.id);
 
     if (!channelId) {
       return interaction.editReply(

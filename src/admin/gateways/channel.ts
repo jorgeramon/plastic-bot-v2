@@ -33,10 +33,17 @@ export class ChannelGateway extends BaseGateway {
   async setConfessionChannel(interaction: CommandInteraction) {
     await interaction.deferReply();
 
+    const { guild } = interaction;
+
     const options = interaction.options as CommandInteractionOptionResolver;
 
     const { id: channelId } = options.getChannel('canal');
-    await this.adminChannelService.setChannel(channelId, ChannelType.STREAM);
+
+    await this.adminChannelService.setChannel(
+      channelId,
+      ChannelType.CONFESSION,
+      guild.id,
+    );
 
     await interaction.editReply('Canal de confesiones actualizado');
   }
@@ -58,10 +65,17 @@ export class ChannelGateway extends BaseGateway {
   async setStreamChannel(interaction: CommandInteraction) {
     await interaction.deferReply();
 
+    const { guild } = interaction;
+
     const options = interaction.options as CommandInteractionOptionResolver;
 
     const { id: channelId } = options.getChannel('canal');
-    await this.adminChannelService.setChannel(channelId, ChannelType.STREAM);
+
+    await this.adminChannelService.setChannel(
+      channelId,
+      ChannelType.STREAM,
+      guild.id,
+    );
 
     await interaction.editReply(
       'Canal de notificaciones de streams actualizado',

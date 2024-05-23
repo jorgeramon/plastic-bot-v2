@@ -9,6 +9,14 @@ import { Model } from 'mongoose';
 export class StreamerRepository {
   constructor(@InjectModel(Streamer.name) private model: Model<Streamer>) {}
 
+  async findByAccount(account: string): Promise<IStreamer[]> {
+    const documents: StreamerDocument[] = await this.model
+      .find({ account })
+      .exec();
+
+    return documents.map((document) => document.toJSON());
+  }
+
   async findOneByDiscordAndGuild(
     discord: string,
     guild: string,

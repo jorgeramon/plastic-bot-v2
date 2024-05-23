@@ -1,5 +1,3 @@
-import { ITwitchGame } from './twitch-game';
-
 export interface ITwitchStream {
   id: string;
   user_id: string;
@@ -16,5 +14,4 @@ export interface ITwitchStream {
   tag_ids: string[];
   tags: string[];
   is_mature: boolean;
-  game?: ITwitchGame;
 }

@@ -8,10 +8,15 @@ export class AdminChannelService {
     private readonly channelConfigRepository: ChannelConfigRepository,
   ) {}
 
-  async setChannel(channelId: string, type: ChannelType): Promise<void> {
+  async setChannel(
+    channelId: string,
+    type: ChannelType,
+    guild: string,
+  ): Promise<void> {
     await this.channelConfigRepository.upsert({
       type,
       channel: channelId,
+      guild,
     });
   }
 }

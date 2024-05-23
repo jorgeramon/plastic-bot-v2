@@ -11,6 +11,9 @@ export class ChannelConfig {
 
   @Prop({ required: true })
   channel: string;
+
+  @Prop({ required: true })
+  guild: string;
 }
 
 export const ChannelConfigSchema = SchemaFactory.createForClass(ChannelConfig);

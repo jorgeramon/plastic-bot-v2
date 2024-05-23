@@ -1,10 +1,11 @@
+import { Platform } from '@database/enums/platform';
 import { Body, Controller, Get, Headers, Logger, Post } from '@nestjs/common';
+import { StreamNotificationRx } from '@reactive/services/stream-notification';
 import { Games } from '@twitch/enums/games';
 import { ITwitchNotification } from '@twitch/interfaces/twitch-notification';
 import { ITwitchStream } from '@twitch/interfaces/twitch-stream';
 import { ITwitchSubscription } from '@twitch/interfaces/twitch-subscription';
 import { IWebhookVerification } from '@twitch/interfaces/webhook-verification';
-import { TwitchStreamRx } from '@twitch/rxjs/twitch-stream';
 import { TwitchApiService } from '@twitch/services/twitch-api';
 
 @Controller('webhooks/twitch')
@@ -13,7 +14,7 @@ export class SubscriptionWebhook {
 
   constructor(
     private readonly twitchApiService: TwitchApiService,
-    private readonly twitchStreamRx: TwitchStreamRx,
+    private readonly streamNotificationRx: StreamNotificationRx,
   ) {}
 
   @Get('health')
@@ -63,12 +64,10 @@ export class SubscriptionWebhook {
       return;
     }
 
-    stream.game = await this.twitchApiService.getGameById(stream.game_id);
-
-    this.logger.debug(
-      `Notification for "${stream.user_login}" sent over RX...`,
-    );
-
-    this.twitchStreamRx.nextNotification(stream);
+    this.streamNotificationRx.nextNotification({
+      account: stream.user_id,
+      game: stream.game_name,
+      platform: Platform.TWITCH,
+    });
   }
 }
