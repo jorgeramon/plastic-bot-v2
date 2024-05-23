@@ -31,4 +31,5 @@ export enum Games {
   FRIDAY_NIGHT_FUNKIN = '1071265762',
   GUITAR_FLASH = '496608',
   FRETS_ON_FIRE = '1707',
+  MUSIC = '26936',
 }

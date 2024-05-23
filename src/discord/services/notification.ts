@@ -103,7 +103,7 @@ export class NotificationService implements OnApplicationBootstrap {
         `¡${user.displayName} ha comenzado directo en ${platform.name}!`,
       )
       .setDescription(
-        `<@${user.id}> está transmitiendo **${stream.game}**. Ven y disfruta de su contenido :D`,
+        `<@${user.id}> está transmitiendo **${stream.game}**. Ven y disfruta su contenido :D`,
       )
       .setThumbnail(user.avatarURL())
       .setFooter({
