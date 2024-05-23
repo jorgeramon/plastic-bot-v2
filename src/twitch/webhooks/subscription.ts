@@ -46,6 +46,28 @@ export class SubscriptionWebhook {
       notification.event.broadcaster_user_id,
     );
 
+    /*
+    For Testing lol
+    const stream: ITwitchStream = {
+      id: '51148813565',
+      user_id: '96421771',
+      user_login: 'mdsitton',
+      user_name: 'mdsitton',
+      game_id: '125264560',
+      game_name: 'Clone Hero',
+      type: 'live',
+      title: 'CH Development!',
+      viewer_count: 8,
+      started_at: '2024-05-22T16:26:13Z',
+      language: 'en',
+      thumbnail_url:
+        'https://static-cdn.jtvnw.net/previews-ttv/live_user_mdsitton-{width}x{height}.jpg',
+      tag_ids: [],
+      tags: ['English', 'GameDevelopment', 'gamedev', 'Unity3D', 'clonehero'],
+      is_mature: true,
+    };
+    */
+
     if (!stream) {
       this.logger.warn(
         `No stream found for: ${notification.event.broadcaster_user_login}`,
@@ -67,6 +89,10 @@ export class SubscriptionWebhook {
     this.streamNotificationRx.nextNotification({
       account: stream.user_id,
       game: stream.game_name,
+      link: `https://twitch.tv/${stream.user_login}`,
+      preview: stream.thumbnail_url
+        .replace('{width}', '1280')
+        .replace('{height}', '720'),
       platform: Platform.TWITCH,
     });
   }
