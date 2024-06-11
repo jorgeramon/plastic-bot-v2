@@ -108,7 +108,7 @@ export class NotificationService implements OnApplicationBootstrap {
       .setThumbnail(user.avatarURL())
       .setFooter({
         iconURL: platform.logo,
-        text: platform.name,
+        text: stream.title,
       })
       .setURL(stream.link);
 

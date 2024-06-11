@@ -42,6 +42,8 @@ export class SubscriptionWebhook {
       `Received notification from: ${notification.event.broadcaster_user_login}`,
     );
 
+    this.logger.debug(notification);
+
     const stream: ITwitchStream = await this.twitchApiService.getStreamByUser(
       notification.event.broadcaster_user_id,
     );
@@ -67,10 +69,13 @@ export class SubscriptionWebhook {
     this.streamNotificationRx.nextNotification({
       account: stream.user_id,
       game: stream.game_name,
+      title: stream.title,
       link: `https://twitch.tv/${stream.user_login}`,
-      preview: stream.thumbnail_url
+      preview: `${stream.thumbnail_url
         .replace('{width}', '1280')
-        .replace('{height}', '720'),
+        .replace('{height}', '720')}?timestamp=${Math.floor(
+        Date.now() / 1000,
+      )}`,
       platform: Platform.TWITCH,
     });
   }
